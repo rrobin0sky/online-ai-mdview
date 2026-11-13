@@ -1,0 +1,473 @@
+/* GitHub / Modern Documentation Reader Typography */
+
+.markdown-body {
+  color: inherit;
+  font-size: 15.5px;
+  line-height: 1.75;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  scroll-margin-top: 1.5rem;
+}
+
+.markdown-body h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  letter-spacing: -0.025em;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  letter-spacing: -0.02em;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.015em;
+}
+
+.markdown-body h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.markdown-body p {
+  margin-bottom: 1.15rem;
+  color: hsl(var(--foreground) / 0.92);
+}
+
+.markdown-body strong {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.markdown-body a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.markdown-body a:hover {
+  opacity: 0.8;
+}
+
+.markdown-body ul:not(.contains-task-list) {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown-body li {
+  margin-bottom: 0.35rem;
+}
+
+.markdown-body blockquote {
+  border-left: 3.5px solid hsl(var(--primary) / 0.7);
+  background-color: hsl(var(--muted) / 0.4);
+  padding: 0.75rem 1.15rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin: 1.25rem 0;
+  color: hsl(var(--muted-foreground));
+}
+
+.markdown-body blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body hr {
+  margin: 2.25rem 0;
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Tables */
+.markdown-body table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.75rem 0;
+  font-size: 0.9rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.65rem;
+  overflow: hidden;
+  display: table;
+}
+
+.markdown-body th {
+  background-color: hsl(var(--muted) / 0.8);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.markdown-body td {
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+/* Keep the first column (labels/dimensions) from breaking into vertical characters */
+.markdown-body th:first-child,
+.markdown-body td:first-child {
+  white-space: nowrap;
+  font-weight: 600;
+  background-color: hsl(var(--muted) / 0.35);
+}
+
+.markdown-body tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-body tr:hover td {
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.dark .markdown-body th {
+  background-color: #18181b;
+  color: #f8fafc;
+  border-bottom: 1px solid #27272a;
+}
+
+.dark .markdown-body td {
+  background-color: #0d1117;
+  color: #e4e4e7;
+  border-bottom: 1px solid #27272a;
+}
+
+.dark .markdown-body th:first-child,
+.dark .markdown-body td:first-child {
+  background-color: #141820;
+  color: #f4f4f5;
+}
+
+.dark .markdown-body tr:hover td {
+  background-color: #161b22;
+}
+
+/* Inline code */
+.markdown-body :not(pre) > code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.35rem;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--primary));
+  font-weight: 500;
+  border: 1px solid hsl(var(--border) / 0.6);
+}
+
+/* Task lists */
+.markdown-body ul.contains-task-list {
+  list-style: none;
+  padding-left: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.markdown-body li.task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.markdown-body li.task-list-item input[type="checkbox"] {
+  margin-top: 0.35rem;
+  border-radius: 0.25rem;
+  accent-color: hsl(var(--primary));
+  cursor: default;
+}
+
+/* Images */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5rem auto;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Shiki code block styles reset inside pre */
+.code-block-body pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+.code-block-body pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  color: inherit !important;
+}
+
+/* Mermaid Diagram High-Contrast Modern Dark & Light Theme */
+.mermaid-block-wrapper {
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Dark Theme Mermaid */
+.dark .mermaid-block-wrapper {
+  background-color: #0d1117 !important;
+  border-color: #27272a !important;
+}
+
+.dark .mermaid-diagram-container svg {
+  background: transparent !important;
+  color: #f8fafc !important;
+}
+
+/* Edge labels background (SVG rects, polygons & foreignObject HTML wrappers) */
+.dark .mermaid-diagram-container .edgeLabel,
+.dark .mermaid-diagram-container .edgeLabels,
+.dark .mermaid-diagram-container .edgeLabels g,
+.dark .mermaid-diagram-container .edgeLabels rect,
+.dark .mermaid-diagram-container .edgeLabels polygon,
+.dark .mermaid-diagram-container .edgeLabel rect,
+.dark .mermaid-diagram-container .edgeLabel polygon,
+.dark .mermaid-diagram-container .label-container,
+.dark .mermaid-diagram-container .labelBkg,
+.dark .mermaid-diagram-container .labelBkg rect,
+.dark .mermaid-diagram-container [class*="edgeLabel"] rect,
+.dark .mermaid-diagram-container [class*="labelBox"] {
+  fill: #18181b !important;
+  background-color: #18181b !important;
+  background: #18181b !important;
+  stroke: #3f3f46 !important;
+  stroke-width: 1px !important;
+  rx: 4px !important;
+  ry: 4px !important;
+}
+
+/* Edge labels text: ensure text inside spans, p, div, text is always bright */
+.dark .mermaid-diagram-container .edgeLabels text,
+.dark .mermaid-diagram-container .edgeLabel text,
+.dark .mermaid-diagram-container .edgeLabels tspan,
+.dark .mermaid-diagram-container .edgeLabel tspan,
+.dark .mermaid-diagram-container .edgeLabels span,
+.dark .mermaid-diagram-container .edgeLabel span,
+.dark .mermaid-diagram-container .edgeLabels p,
+.dark .mermaid-diagram-container .edgeLabel p,
+.dark .mermaid-diagram-container .edgeLabels div,
+.dark .mermaid-diagram-container .edgeLabel div,
+.dark .mermaid-diagram-container .edgeLabel,
+.dark .mermaid-diagram-container .edgeLabel *,
+.dark .mermaid-diagram-container .labelBkg,
+.dark .mermaid-diagram-container .labelBkg * {
+  color: #f8fafc !important;
+  fill: #f8fafc !important;
+}
+
+.dark .mermaid-diagram-container .node rect,
+.dark .mermaid-diagram-container .node circle,
+.dark .mermaid-diagram-container .node ellipse,
+.dark .mermaid-diagram-container .node polygon,
+.dark .mermaid-diagram-container .node path {
+  fill: #18181b !important;
+  stroke: #3f3f46 !important;
+  stroke-width: 1.5px !important;
+}
+
+.dark .mermaid-diagram-container .node,
+.dark .mermaid-diagram-container .node text,
+.dark .mermaid-diagram-container .node .label,
+.dark .mermaid-diagram-container .node *,
+.dark .mermaid-diagram-container .node span,
+.dark .mermaid-diagram-container .node span.nodeLabel,
+.dark .mermaid-diagram-container .node b,
+.dark .mermaid-diagram-container .node p,
+.dark .mermaid-diagram-container .node div {
+  fill: #f8fafc !important;
+  color: #f8fafc !important;
+}
+
+.dark .mermaid-diagram-container .cluster rect {
+  fill: #09090b !important;
+  stroke: #27272a !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 4, 4 !important;
+  rx: 10px !important;
+  ry: 10px !important;
+}
+
+.dark .mermaid-diagram-container .cluster text,
+.dark .mermaid-diagram-container .cluster .label,
+.dark .mermaid-diagram-container .cluster *,
+.dark .mermaid-diagram-container .cluster span,
+.dark .mermaid-diagram-container .cluster-label span {
+  fill: #94a3b8 !important;
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+}
+
+.dark .mermaid-diagram-container .flowchart-link,
+.dark .mermaid-diagram-container .edge-thickness-normal,
+.dark .mermaid-diagram-container .edge-thickness-thick,
+.dark .mermaid-diagram-container path.link,
+.dark .mermaid-diagram-container .arrowheadPath,
+.dark .mermaid-diagram-container .edgePaths path {
+  stroke: #71717a !important;
+}
+
+.dark .mermaid-diagram-container .marker,
+.dark .mermaid-diagram-container marker path,
+.dark .mermaid-diagram-container .arrowMarkerPath {
+  fill: #71717a !important;
+  stroke: #71717a !important;
+}
+
+/* Light Theme Mermaid */
+html:not(.dark) .mermaid-block-wrapper {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .mermaid-diagram-container svg {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+/* Edge labels background (SVG rects, polygons & foreignObject HTML wrappers) */
+html:not(.dark) .mermaid-diagram-container .edgeLabel,
+html:not(.dark) .mermaid-diagram-container .edgeLabels,
+html:not(.dark) .mermaid-diagram-container .edgeLabels g,
+html:not(.dark) .mermaid-diagram-container .edgeLabels rect,
+html:not(.dark) .mermaid-diagram-container .edgeLabels polygon,
+html:not(.dark) .mermaid-diagram-container .edgeLabel rect,
+html:not(.dark) .mermaid-diagram-container .edgeLabel polygon,
+html:not(.dark) .mermaid-diagram-container .label-container,
+html:not(.dark) .mermaid-diagram-container .labelBkg,
+html:not(.dark) .mermaid-diagram-container .labelBkg rect,
+html:not(.dark) .mermaid-diagram-container [class*="edgeLabel"] rect,
+html:not(.dark) .mermaid-diagram-container [class*="labelBox"] {
+  fill: #ffffff !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 1px !important;
+  rx: 4px !important;
+  ry: 4px !important;
+}
+
+/* Edge labels text: ensure text is always dark slate in light mode */
+html:not(.dark) .mermaid-diagram-container .edgeLabels text,
+html:not(.dark) .mermaid-diagram-container .edgeLabel text,
+html:not(.dark) .mermaid-diagram-container .edgeLabels tspan,
+html:not(.dark) .mermaid-diagram-container .edgeLabel tspan,
+html:not(.dark) .mermaid-diagram-container .edgeLabels span,
+html:not(.dark) .mermaid-diagram-container .edgeLabel span,
+html:not(.dark) .mermaid-diagram-container .edgeLabels p,
+html:not(.dark) .mermaid-diagram-container .edgeLabel p,
+html:not(.dark) .mermaid-diagram-container .edgeLabels div,
+html:not(.dark) .mermaid-diagram-container .edgeLabel div,
+html:not(.dark) .mermaid-diagram-container .edgeLabel,
+html:not(.dark) .mermaid-diagram-container .edgeLabel *,
+html:not(.dark) .mermaid-diagram-container .labelBkg,
+html:not(.dark) .mermaid-diagram-container .labelBkg * {
+  color: #0f172a !important;
+  fill: #0f172a !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .node rect,
+html:not(.dark) .mermaid-diagram-container .node circle,
+html:not(.dark) .mermaid-diagram-container .node ellipse,
+html:not(.dark) .mermaid-diagram-container .node polygon,
+html:not(.dark) .mermaid-diagram-container .node path {
+  fill: #ffffff !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 1.5px !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .node,
+html:not(.dark) .mermaid-diagram-container .node text,
+html:not(.dark) .mermaid-diagram-container .node .label,
+html:not(.dark) .mermaid-diagram-container .node *,
+html:not(.dark) .mermaid-diagram-container .node span,
+html:not(.dark) .mermaid-diagram-container .node span.nodeLabel,
+html:not(.dark) .mermaid-diagram-container .node b,
+html:not(.dark) .mermaid-diagram-container .node p,
+html:not(.dark) .mermaid-diagram-container .node div {
+  fill: #0f172a !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .cluster rect {
+  fill: #f1f5f9 !important;
+  stroke: #cbd5e1 !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 4, 4 !important;
+  rx: 10px !important;
+  ry: 10px !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .cluster text,
+html:not(.dark) .mermaid-diagram-container .cluster .label,
+html:not(.dark) .mermaid-diagram-container .cluster *,
+html:not(.dark) .mermaid-diagram-container .cluster span,
+html:not(.dark) .mermaid-diagram-container .cluster-label span {
+  fill: #475569 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .flowchart-link,
+html:not(.dark) .mermaid-diagram-container .edge-thickness-normal,
+html:not(.dark) .mermaid-diagram-container .edge-thickness-thick,
+html:not(.dark) .mermaid-diagram-container path.link,
+html:not(.dark) .mermaid-diagram-container .arrowheadPath,
+html:not(.dark) .mermaid-diagram-container .edgePaths path {
+  stroke: #94a3b8 !important;
+}
+
+html:not(.dark) .mermaid-diagram-container .marker,
+html:not(.dark) .mermaid-diagram-container marker path,
+html:not(.dark) .mermaid-diagram-container .arrowMarkerPath {
+  fill: #94a3b8 !important;
+  stroke: #94a3b8 !important;
+}
+

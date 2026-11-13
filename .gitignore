@@ -1,0 +1,36 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Node & Package Managers
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.*
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Rust & Tauri Build Artifacts
+src-tauri/target/
+target/
+*.app/
+*.dmg
+*.zip
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary scratch
+*.log

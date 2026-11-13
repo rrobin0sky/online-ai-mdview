@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# mdview launcher script
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BINARY="$DIR/src-tauri/target/debug/mdview"
+
+if [ ! -f "$BINARY" ]; then
+  echo "Building mdview..."
+  (cd "$DIR" && pnpm build && cd src-tauri && cargo build)
+fi
+
+exec "$BINARY" "$@"
