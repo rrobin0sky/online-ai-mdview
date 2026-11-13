@@ -10,6 +10,7 @@
     <a href="https://tauri.app"><img src="https://img.shields.io/badge/Tauri-v2.2-24C8D8?logo=tauri&logoColor=white" alt="Tauri v2"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
     <a href="https://mdview.bin0sky.tech"><img src="https://img.shields.io/badge/Web-mdview.bin0sky.tech-purple" alt="Online Web"></a>
+    <a href="https://rrobin0sky.github.io/online-ai-mdview/"><img src="https://img.shields.io/badge/Demo-GitHub%20Pages-brightgreen?logo=github" alt="GitHub Pages"></a>
   </p>
 </div>
 
