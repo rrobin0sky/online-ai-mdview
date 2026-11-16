@@ -162,7 +162,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   return (
     <header
       data-tauri-drag-region
-      className="sticky top-0 z-30 h-10 w-full border-b border-zinc-200/70 dark:border-zinc-800/70 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-between pl-[76px] pr-4 select-none"
+      className="sticky top-0 z-30 h-10 w-full border-b border-zinc-200/70 dark:border-white/[0.08] bg-white/80 dark:bg-[#08090A]/90 backdrop-blur-md flex items-center justify-between pl-[76px] pr-4 select-none"
     >
       <div
         data-tauri-drag-region

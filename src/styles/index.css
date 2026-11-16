@@ -46,6 +46,10 @@
   }
 }
 
+html.b0-embedded header[data-tauri-drag-region] {
+  padding-left: 1rem !important;
+}
+
 /* Custom minimal scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
