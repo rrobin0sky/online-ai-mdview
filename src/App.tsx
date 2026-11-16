@@ -546,7 +546,7 @@ export const App: React.FC = () => {
             />
 
             {/* Central Article Content Container - Apple HIG Optimal Reading Measure (~860px) */}
-            <div className="w-full max-w-[1120px] mx-auto px-6 sm:px-10 lg:px-12 py-8 transition-all">
+            <div className="w-full max-w-[1320px] mx-auto px-6 sm:px-10 lg:px-12 py-8 transition-all">
               <div style={{ zoom: zoomLevel }}>
                 <DocumentErrorBoundary
                   fallbackTitle="Document Display Notice"
