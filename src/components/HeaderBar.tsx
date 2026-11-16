@@ -16,8 +16,6 @@ import {
   X,
   Pencil,
 } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
-import { ThemeMode } from "../types";
 import { isTauriEnv } from "../lib/tauri-bridge";
 
 interface HeaderBarProps {
@@ -33,8 +31,6 @@ interface HeaderBarProps {
   onResetZoom?: () => void;
   onOpenFile?: () => void;
   onOpenSearch?: () => void;
-  theme: ThemeMode;
-  onToggleTheme: () => void;
   isEditing: boolean;
   onToggleEdit: () => void;
   isSplitView: boolean;
@@ -59,8 +55,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onResetZoom,
   onOpenFile,
   onOpenSearch,
-  theme,
-  onToggleTheme,
   isEditing,
   onToggleEdit,
   isSplitView,
@@ -415,7 +409,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <ListTree className="w-3.5 h-3.5" />
           </button>
         )}
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         {!isTauriEnv() && (
           <a
             href="https://github.com/rrobin0sky/online-ai-mdview"

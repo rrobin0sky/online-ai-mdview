@@ -22,7 +22,7 @@ import {
   watchFile,
   writeFile,
 } from "./lib/tauri-bridge";
-import { FileNode, TocItem, ThemeMode } from "./types";
+import { FileNode, TocItem } from "./types";
 
 export const App: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string | null>(null);
@@ -65,24 +65,9 @@ export const App: React.FC = () => {
     };
   }, [content, isEditing]);
 
-  // Binary Dark/Light theme state
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem("mdview-theme");
-    return saved === "light" ? "light" : "dark";
-  });
-
-  const toggleTheme = useCallback(() => {
-    setTheme((prev) => {
-      const next: ThemeMode = prev === "dark" ? "light" : "dark";
-      const root = document.documentElement;
-      if (next === "dark") {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
-      localStorage.setItem("mdview-theme", next);
-      return next;
-    });
+  // Enforce dark mode only
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
   }, []);
 
   const readerContainerRef = useRef<HTMLDivElement>(null);
@@ -439,8 +424,6 @@ export const App: React.FC = () => {
         onResetZoom={() => changeZoom("reset")}
         onOpenFile={handleOpenFile}
         onOpenSearch={() => setIsSearchOpen((prev) => !prev)}
-        theme={theme}
-        onToggleTheme={toggleTheme}
         isEditing={isEditing}
         onToggleEdit={() => setIsEditing((prev) => !prev)}
         isSplitView={isSplitView}
@@ -491,7 +474,7 @@ export const App: React.FC = () => {
                   <MarkdownEditor
                     value={content}
                     onChange={handleContentChange}
-                    isDark={theme === "dark"}
+                    isDark={true}
                     onSave={handleSave}
                   />
                 </DocumentErrorBoundary>
@@ -511,7 +494,7 @@ export const App: React.FC = () => {
                     <MarkdownViewer
                       content={previewContent}
                       onTocChange={setTocItems}
-                      isDark={theme === "dark"}
+                      isDark={true}
                     />
                   </DocumentErrorBoundary>
                 </div>
@@ -524,7 +507,7 @@ export const App: React.FC = () => {
                 <MarkdownEditor
                   value={content}
                   onChange={handleContentChange}
-                  isDark={theme === "dark"}
+                  isDark={true}
                   onSave={handleSave}
                 />
               </DocumentErrorBoundary>
@@ -555,7 +538,7 @@ export const App: React.FC = () => {
                   <MarkdownViewer
                     content={previewContent}
                     onTocChange={setTocItems}
-                    isDark={theme === "dark"}
+                    isDark={true}
                   />
                 </DocumentErrorBoundary>
               </div>

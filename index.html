@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,14 +11,8 @@
     <script>
       (function() {
         try {
+          document.documentElement.classList.add("dark");
           var params = new URLSearchParams(window.location.search);
-          var urlTheme = params.get("b0_theme");
-          var saved = urlTheme || localStorage.getItem("b0_theme") || localStorage.getItem("mdview-theme");
-          if (saved !== "light") {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
-          }
           if (params.get("b0_embedded") === "1" || window.top !== window.self) {
             document.documentElement.classList.add("b0-embedded");
           }
