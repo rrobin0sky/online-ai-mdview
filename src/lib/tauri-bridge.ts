@@ -88,9 +88,24 @@ export async function fetchInitialTarget(): Promise<InitialTarget> {
     }
   }
 
-  // Fallback for browser preview
+  // Fallback for browser web mode: restore saved draft if available
+  try {
+    const savedDraft = localStorage.getItem("mdview_web_draft");
+    const savedName = localStorage.getItem("mdview_web_filename") || "welcome.md";
+    if (savedDraft !== null) {
+      return {
+        path: savedName,
+        is_directory: false,
+        content: savedDraft,
+        title: savedName,
+      };
+    }
+  } catch (e) {
+    console.warn("Failed to read web draft from localStorage:", e);
+  }
+
   return {
-    path: "/demo/welcome.md",
+    path: "welcome.md",
     is_directory: false,
     content: sampleMarkdown,
     title: "welcome.md",

@@ -6,7 +6,7 @@ import { MarkdownEditor } from "./components/MarkdownEditor";
 import { TableOfContents } from "./components/TableOfContents";
 import { SearchBar } from "./components/SearchBar";
 import { DocumentErrorBoundary } from "./components/DocumentErrorBoundary";
-import { UploadCloud, ListTree, ArrowUp } from "lucide-react";
+import { UploadCloud, ListTree, ArrowUp, Download, X, Zap, FolderTree, RefreshCw, Terminal } from "lucide-react";
 import {
   fetchInitialTarget,
   isTauriEnv,
@@ -36,6 +36,7 @@ export const App: React.FC = () => {
   const [isDragHovering, setIsDragHovering] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
 
   // Edit mode & Split view state
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -116,12 +117,41 @@ export const App: React.FC = () => {
     try {
       lastSavedContentRef.current = content;
       lastSavedTimeRef.current = Date.now();
-      await writeFile(currentPath, content);
+      await writeFile(isTauriEnv() ? currentPath : (fileName || currentPath), content);
       setIsDirty(false);
     } catch (err) {
       console.error("Failed to save file:", err);
     }
-  }, [currentPath, content]);
+  }, [currentPath, fileName, content]);
+
+  // Web mode: Create a new blank Markdown document and enter Split View
+  const handleNewFile = useCallback(() => {
+    setIsDirectoryMode(false);
+    setIsSidebarOpen(false);
+    setCurrentPath("untitled.md");
+    setFileName("untitled.md");
+    setContent("# Untitled\n\nStart writing Markdown here...\n");
+    setIsDirty(false);
+    setIsEditing(true);
+    setIsSplitView(true);
+  }, []);
+
+  // Web mode: Export / Download current document as .md
+  const handleExportFile = useCallback(async () => {
+    await writeFile(fileName || "document.md", content);
+    setIsDirty(false);
+  }, [fileName, content]);
+
+  // Web mode: Persist current draft to localStorage automatically
+  useEffect(() => {
+    if (isTauriEnv() || !currentPath) return;
+    try {
+      localStorage.setItem("mdview_web_draft", content);
+      localStorage.setItem("mdview_web_filename", fileName || "welcome.md");
+    } catch (e) {
+      // Ignore storage quota errors
+    }
+  }, [content, fileName, currentPath]);
 
   // Helper to open file via native file dialog (Cmd+O)
   const handleOpenFile = useCallback(async () => {
@@ -422,7 +452,10 @@ export const App: React.FC = () => {
         onToggleToc={() => setIsTocOpen(!isTocOpen)}
         zoomLevel={zoomLevel}
         onResetZoom={() => changeZoom("reset")}
+        onNewFile={handleNewFile}
         onOpenFile={handleOpenFile}
+        onExportFile={handleExportFile}
+        onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
         onOpenSearch={() => setIsSearchOpen((prev) => !prev)}
         isEditing={isEditing}
         onToggleEdit={() => setIsEditing((prev) => !prev)}
@@ -571,6 +604,90 @@ export const App: React.FC = () => {
           </aside>
         )}
       </div>
+
+      {/* macOS Native App Download Modal (Web Mode) */}
+      {isDownloadModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setIsDownloadModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-6 text-zinc-100 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setIsDownloadModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors cursor-pointer"
+              title="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3.5 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0">
+                <svg className="w-7 h-7 text-white" viewBox="0 0 48 48" fill="none">
+                  <path d="M12 31V17L17.5 23L23 17V31" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M32 20V29M28.5 25.5L32 29L35.5 25.5" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white tracking-tight">mdview for macOS</h2>
+                <p className="text-xs text-zinc-400">基于 Tauri v2 + Rust 构建的原生极速 Markdown 阅读器</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6 text-xs text-zinc-300">
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                <Zap className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-zinc-100">冷启动 &lt; 300ms • 内存 &lt; 50MB</div>
+                  <div className="text-zinc-400 mt-0.5">无 Electron 沉重运行时，调用系统原生 Webview 毫秒级秒开。</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                <RefreshCw className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-zinc-100">Rust 原生文件监听热重载 (Live Reload)</div>
+                  <div className="text-zinc-400 mt-0.5">外部编辑器或 AI 脚本改写本地文件时，零闪烁原地热更新。</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+                <FolderTree className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-zinc-100">双击直读 &amp; 终端 CLI 唤醒</div>
+                  <div className="text-zinc-400 mt-0.5 flex items-center gap-1">
+                    <Terminal className="w-3 h-3 inline text-zinc-500" />
+                    <code className="font-mono text-[11px] text-zinc-300">mdview README.md</code>
+                    <span>或</span>
+                    <code className="font-mono text-[11px] text-zinc-300">mdview ./docs</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <a
+                href="https://github.com/rrobin0sky/online-ai-mdview/releases/latest/download/mdview-macOS.dmg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-600/20"
+              >
+                <Download className="w-4 h-4" />
+                <span>下载 macOS 版 (.dmg)</span>
+              </a>
+              <a
+                href="https://github.com/rrobin0sky/online-ai-mdview/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2 px-4 rounded-xl bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 font-medium text-xs flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <span>查看所有历史版本 (GitHub Releases)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

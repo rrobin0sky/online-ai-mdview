@@ -15,6 +15,9 @@ import {
   ArrowRight,
   X,
   Pencil,
+  FilePlus,
+  Download,
+  Laptop,
 } from "lucide-react";
 import { isTauriEnv } from "../lib/tauri-bridge";
 
@@ -29,7 +32,10 @@ interface HeaderBarProps {
   onToggleToc?: () => void;
   zoomLevel?: number;
   onResetZoom?: () => void;
+  onNewFile?: () => void;
   onOpenFile?: () => void;
+  onExportFile?: () => void;
+  onOpenDownloadModal?: () => void;
   onOpenSearch?: () => void;
   isEditing: boolean;
   onToggleEdit: () => void;
@@ -53,7 +59,10 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onToggleToc,
   zoomLevel = 1.0,
   onResetZoom,
+  onNewFile,
   onOpenFile,
+  onExportFile,
+  onOpenDownloadModal,
   onOpenSearch,
   isEditing,
   onToggleEdit,
@@ -65,6 +74,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onRenameFile,
   onRevealInFinder,
 }) => {
+  const inTauri = isTauriEnv();
   // Address Bar State
   const [isAddressBarActive, setIsAddressBarActive] = useState<boolean>(false);
   const [addressInput, setAddressInput] = useState<string>("");
@@ -273,8 +283,8 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               </div>
             )}
 
-            {/* Full Path & Interactive Hover Actions */}
-            {filePath && (
+            {/* Full Path & Interactive Hover Actions (Desktop only) */}
+            {inTauri && filePath && (
               <div className="group/path flex items-center gap-1 min-w-0">
                 <button
                   type="button"
@@ -362,14 +372,36 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           {isEditing ? <Eye className="w-3.5 h-3.5" /> : <PenLine className="w-3.5 h-3.5" />}
         </button>
 
+        {!inTauri && onNewFile && (
+          <button
+            type="button"
+            onClick={onNewFile}
+            title="New Markdown Document"
+            className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          >
+            <FilePlus className="w-3.5 h-3.5" />
+          </button>
+        )}
+
         {onOpenFile && (
           <button
             type="button"
             onClick={onOpenFile}
-            title="Open Markdown File (Cmd+O)"
+            title={inTauri ? "Open Markdown File (Cmd+O)" : "Open Local .md File"}
             className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <FolderOpen className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {!inTauri && onExportFile && (
+          <button
+            type="button"
+            onClick={onExportFile}
+            title="Export / Download .md"
+            className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5" />
           </button>
         )}
 
@@ -409,7 +441,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <ListTree className="w-3.5 h-3.5" />
           </button>
         )}
-        {!isTauriEnv() && (
+        {!inTauri && onOpenDownloadModal && (
+          <button
+            type="button"
+            onClick={onOpenDownloadModal}
+            title="Download macOS Native App"
+            className="ml-1 px-2.5 py-1 rounded-md bg-blue-600/15 hover:bg-blue-600/25 text-blue-400 border border-blue-500/30 text-[11px] font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Laptop className="w-3 h-3" />
+            <span>Mac App</span>
+          </button>
+        )}
+        {!inTauri && (
           <a
             href="https://github.com/rrobin0sky/online-ai-mdview"
             target="_blank"
