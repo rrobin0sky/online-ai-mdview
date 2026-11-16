@@ -3,15 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08090A" />
     <title>mdview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
       (function() {
         try {
-          var saved = localStorage.getItem("mdview-theme");
+          var params = new URLSearchParams(window.location.search);
+          var urlTheme = params.get("b0_theme");
+          var saved = urlTheme || localStorage.getItem("b0_theme") || localStorage.getItem("mdview-theme");
           if (saved !== "light") {
             document.documentElement.classList.add("dark");
           } else {
             document.documentElement.classList.remove("dark");
+          }
+          if (params.get("b0_embedded") === "1" || window.top !== window.self) {
+            document.documentElement.classList.add("b0-embedded");
           }
         } catch (e) {
           document.documentElement.classList.add("dark");
