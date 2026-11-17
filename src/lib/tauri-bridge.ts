@@ -1,10 +1,26 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { FileNode, FileUpdatePayload, InitialTarget } from "../types";
 
 export const isTauriEnv = () => {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 };
+
+export async function toggleWindowZoom(fullscreen = false): Promise<void> {
+  if (!isTauriEnv()) return;
+  try {
+    const win = getCurrentWindow();
+    if (fullscreen) {
+      const isFs = await win.isFullscreen();
+      await win.setFullscreen(!isFs);
+    } else {
+      await win.toggleMaximize();
+    }
+  } catch (err) {
+    console.error("Failed to toggle window zoom:", err);
+  }
+}
 
 export const sampleMarkdown = `# Welcome to mdview 🚀
 

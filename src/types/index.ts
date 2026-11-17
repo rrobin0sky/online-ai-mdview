@@ -18,8 +18,6 @@ export interface TocItem {
   level: number;
 }
 
-export type ThemeMode = "light" | "dark";
-
 export interface FileUpdatePayload {
   path: string;
   content: string;

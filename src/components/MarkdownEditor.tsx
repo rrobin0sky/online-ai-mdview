@@ -7,14 +7,12 @@ import { keymap } from "@codemirror/view";
 interface MarkdownEditorProps {
   value: string;
   onChange: (val: string) => void;
-  isDark: boolean;
   onSave?: () => void;
 }
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
   onChange,
-  isDark,
   onSave,
 }) => {
   const extensions = useMemo(() => {
@@ -41,12 +39,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   }, [onSave]);
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden bg-white dark:bg-zinc-950 text-[14px]">
+    <div className="h-full w-full flex flex-col overflow-hidden bg-[#0d0f12] text-[15px]">
       <CodeMirror
         value={value}
         height="100%"
-        className="h-full overflow-auto text-[14px] leading-relaxed"
-        theme={isDark ? oneDark : "light"}
+        className="h-full overflow-auto text-[15px] leading-relaxed"
+        theme={oneDark}
         extensions={extensions}
         onChange={onChange}
         basicSetup={{

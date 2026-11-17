@@ -38,6 +38,61 @@ export const App: React.FC = () => {
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
 
+  // Resizable Outline sidebar width (default 280px, range 180px - 440px)
+  const [tocWidth, setTocWidth] = useState<number>(() => {
+    try {
+      const saved = parseInt(localStorage.getItem("mdview_toc_width") || "", 10);
+      if (!isNaN(saved) && saved >= 180 && saved <= 440) return saved;
+    } catch {
+      // ignore
+    }
+    return 280;
+  });
+  const isResizingTocRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizingTocRef.current) return;
+      const nextWidth = Math.min(440, Math.max(180, window.innerWidth - e.clientX));
+      setTocWidth(nextWidth);
+    };
+
+    const handleMouseUp = () => {
+      if (!isResizingTocRef.current) return;
+      isResizingTocRef.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("mdview_toc_width", String(tocWidth));
+    } catch {
+      // ignore
+    }
+  }, [tocWidth]);
+
+  const handleSetViewMode = useCallback((mode: "read" | "edit" | "split") => {
+    if (mode === "read") {
+      setIsEditing(false);
+      setIsSplitView(false);
+    } else if (mode === "edit") {
+      setIsEditing(true);
+      setIsSplitView(false);
+    } else {
+      setIsEditing(true);
+      setIsSplitView(true);
+    }
+  }, []);
+
   // Edit mode & Split view state
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isSplitView, setIsSplitView] = useState<boolean>(false);
@@ -440,7 +495,7 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors overflow-hidden select-none">
+    <div className="h-screen w-screen flex flex-col bg-[#0d0f12] text-zinc-100 overflow-hidden select-none">
       <HeaderBar
         filePath={currentPath}
         fileName={fileName}
@@ -451,16 +506,15 @@ export const App: React.FC = () => {
         isTocOpen={isTocOpen}
         onToggleToc={() => setIsTocOpen(!isTocOpen)}
         zoomLevel={zoomLevel}
-        onResetZoom={() => changeZoom("reset")}
+        onChangeZoom={changeZoom}
         onNewFile={handleNewFile}
         onOpenFile={handleOpenFile}
         onExportFile={handleExportFile}
         onOpenDownloadModal={() => setIsDownloadModalOpen(true)}
         onOpenSearch={() => setIsSearchOpen((prev) => !prev)}
         isEditing={isEditing}
-        onToggleEdit={() => setIsEditing((prev) => !prev)}
         isSplitView={isSplitView}
-        onToggleSplitView={() => setIsSplitView((prev) => !prev)}
+        onSetViewMode={handleSetViewMode}
         isDirty={isDirty}
         onSave={handleSave}
         onOpenPath={handleOpenPath}
@@ -502,12 +556,11 @@ export const App: React.FC = () => {
           isSplitView ? (
             /* Split View: Left Editor, Right Live Rendered Preview */
             <div className="flex-1 h-full min-h-0 min-w-0 flex overflow-hidden">
-              <div className="w-1/2 h-full min-h-0 border-r border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden flex flex-col">
+              <div className="w-1/2 h-full min-h-0 border-r border-white/[0.06] overflow-hidden flex flex-col">
                 <DocumentErrorBoundary fallbackTitle="Editor Notice">
                   <MarkdownEditor
                     value={content}
                     onChange={handleContentChange}
-                    isDark={true}
                     onSave={handleSave}
                   />
                 </DocumentErrorBoundary>
@@ -517,7 +570,7 @@ export const App: React.FC = () => {
                 id="reader-container"
                 ref={readerContainerRef}
                 onScroll={handleScroll}
-                className="w-1/2 h-full min-h-0 overflow-y-auto relative select-text bg-white dark:bg-zinc-950"
+                className="w-1/2 h-full min-h-0 overflow-y-auto relative select-text bg-[#0d0f12]"
               >
                 <div className="w-full px-6 sm:px-8 py-6" style={{ zoom: zoomLevel }}>
                   <DocumentErrorBoundary
@@ -540,7 +593,6 @@ export const App: React.FC = () => {
                 <MarkdownEditor
                   value={content}
                   onChange={handleContentChange}
-                  isDark={true}
                   onSave={handleSave}
                 />
               </DocumentErrorBoundary>
@@ -591,15 +643,33 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* Right: Fixed Docked Outline Pane (Streamlined, minimal visual noise) */}
+        {/* Right: Resizable Docked Outline Pane */}
         {tocItems.length > 0 && isTocOpen && (
-          <aside className="w-64 flex-shrink-0 h-full border-l border-zinc-200/40 dark:border-zinc-800/40 bg-zinc-50/20 dark:bg-zinc-950/20 backdrop-blur-xs flex flex-col overflow-hidden select-none">
-            <div className="px-3.5 py-2.5 border-b border-zinc-200/30 dark:border-zinc-800/30 flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-              <ListTree className="w-3.5 h-3.5 text-blue-500" />
+          <aside
+            style={{ width: tocWidth }}
+            className="relative flex-shrink-0 h-full border-l border-white/[0.06] bg-[#0d0f12]/60 backdrop-blur-md flex flex-col overflow-hidden select-none"
+          >
+            {/* Left-edge Resize Handle */}
+            <div
+              onMouseDown={() => {
+                isResizingTocRef.current = true;
+                document.body.style.cursor = "col-resize";
+                document.body.style.userSelect = "none";
+              }}
+              onDoubleClick={() => setTocWidth(280)}
+              title="Drag to resize Outline (Double-click to reset)"
+              className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500/60 active:bg-blue-500 transition-colors z-10"
+            />
+            <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+              <ListTree className="w-3.5 h-3.5 text-blue-400" />
               <span>Outline</span>
             </div>
-            <div className="flex-1 overflow-y-auto p-2.5">
-              <TableOfContents items={tocItems} containerId="reader-container" />
+            <div className="flex-1 overflow-y-auto p-3">
+              <TableOfContents
+                items={tocItems}
+                containerId="reader-container"
+                zoomLevel={zoomLevel}
+              />
             </div>
           </aside>
         )}

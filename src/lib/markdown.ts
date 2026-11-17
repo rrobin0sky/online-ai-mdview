@@ -33,7 +33,7 @@ export async function initHighlighter(): Promise<Highlighter> {
   if (highlighterInstance) return highlighterInstance;
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
-      themes: ["github-dark", "github-light"],
+      themes: ["github-dark"],
       langs: SUPPORTED_LANGS,
     }).then((h) => {
       highlighterInstance = h;
@@ -52,7 +52,7 @@ function slugify(s: string): string {
   return clean || "heading";
 }
 
-export function createMarkdownRenderer(isDark: boolean = false) {
+export function createMarkdownRenderer(_isDark: boolean = true) {
   const md = new MarkdownIt({
     html: true,
     linkify: true,
@@ -104,13 +104,12 @@ export function createMarkdownRenderer(isDark: boolean = false) {
 
     if (highlighterInstance) {
       try {
-        const theme = isDark ? "github-dark" : "github-light";
         const hasLang = highlighterInstance.getLoadedLanguages().includes(lang);
         const resolvedLang = hasLang ? lang : "text";
 
         highlightedCode = highlighterInstance.codeToHtml(code, {
           lang: resolvedLang,
-          theme,
+          theme: "github-dark",
         });
       } catch (err) {
         console.warn("Shiki highlight error:", err);
