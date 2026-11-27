@@ -581,6 +581,7 @@ export const App: React.FC = () => {
                       content={previewContent}
                       onTocChange={setTocItems}
                       isDark={true}
+                      filePath={currentPath}
                     />
                   </DocumentErrorBoundary>
                 </div>
@@ -624,6 +625,7 @@ export const App: React.FC = () => {
                     content={previewContent}
                     onTocChange={setTocItems}
                     isDark={true}
+                    filePath={currentPath}
                   />
                 </DocumentErrorBoundary>
               </div>

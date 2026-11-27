@@ -225,7 +225,18 @@
   border-radius: 0.5rem;
   margin: 1.5rem auto;
   display: block;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.markdown-body a img,
+.markdown-body p > img:not(:only-child) {
+  display: inline-block;
+  margin: 0.15rem 0.25rem;
+  vertical-align: middle;
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow: none;
 }
 
 /* Shiki code block styles reset inside pre */

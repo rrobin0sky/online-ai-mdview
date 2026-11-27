@@ -11,12 +11,14 @@ interface MarkdownViewerProps {
   content: string;
   onTocChange: (items: TocItem[]) => void;
   isDark: boolean;
+  filePath?: string | null;
 }
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   content,
   onTocChange,
   isDark,
+  filePath = null,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlighterReady, setHighlighterReady] = useState(false);
@@ -29,10 +31,10 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     });
   }, []);
 
-  // Create renderer instance based on current dark/light mode
+  // Create renderer instance based on current file path & highlighter state
   const md = useMemo(() => {
-    return createMarkdownRenderer(isDark);
-  }, [isDark, highlighterReady]);
+    return createMarkdownRenderer(isDark, filePath);
+  }, [isDark, filePath, highlighterReady]);
 
   // Render markdown HTML
   const renderedHtml = useMemo(() => {

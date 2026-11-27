@@ -2,6 +2,8 @@ import MarkdownIt from "markdown-it";
 import anchor from "markdown-it-anchor";
 import taskLists from "markdown-it-task-lists";
 import { createHighlighter, Highlighter } from "shiki";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { isTauriEnv } from "./tauri-bridge";
 
 let highlighterInstance: Highlighter | null = null;
 let highlighterPromise: Promise<Highlighter> | null = null;
@@ -52,7 +54,67 @@ function slugify(s: string): string {
   return clean || "heading";
 }
 
-export function createMarkdownRenderer(_isDark: boolean = true) {
+function normalizePosixPath(baseDir: string, relPath: string): string {
+  const parts = (baseDir + "/" + relPath).split("/");
+  const stack: string[] = [];
+  for (const part of parts) {
+    if (!part || part === ".") continue;
+    if (part === "..") {
+      stack.pop();
+    } else {
+      stack.push(part);
+    }
+  }
+  return "/" + stack.join("/");
+}
+
+/**
+ * Resolve local relative/absolute/file:// image paths to Tauri asset:// URLs.
+ * Remote URLs (http/https/data/blob/asset) are returned unchanged.
+ */
+export function resolveImageSrc(rawSrc: string, baseFilePath: string | null = null): string {
+  const src = rawSrc.trim();
+  if (!src) return src;
+  if (/^(https?:|data:|blob:|asset:|\/\/)/i.test(src)) {
+    return src;
+  }
+  if (!isTauriEnv()) {
+    return src;
+  }
+
+  // Separate optional ?query or #hash before decoding & resolving filesystem path
+  const suffixMatch = src.match(/^([^?#]+)([?#].*)?$/);
+  const pathPart = suffixMatch ? suffixMatch[1] : src;
+  const suffix = suffixMatch && suffixMatch[2] ? suffixMatch[2] : "";
+
+  let cleanPath = pathPart;
+  try {
+    cleanPath = decodeURIComponent(cleanPath);
+  } catch {
+    // Keep original if malformed URI sequence
+  }
+
+  if (cleanPath.startsWith("file://")) {
+    cleanPath = cleanPath.slice("file://".length);
+  }
+
+  let absPath = cleanPath;
+  if (!cleanPath.startsWith("/")) {
+    if (!baseFilePath) return src;
+    const lastSlash = baseFilePath.lastIndexOf("/");
+    const baseDir = lastSlash >= 0 ? baseFilePath.slice(0, lastSlash) : "";
+    absPath = normalizePosixPath(baseDir, cleanPath);
+  } else {
+    absPath = normalizePosixPath("", cleanPath);
+  }
+
+  return convertFileSrc(absPath) + suffix;
+}
+
+export function createMarkdownRenderer(
+  _isDark: boolean = true,
+  baseFilePath: string | null = null
+) {
   const md = new MarkdownIt({
     html: true,
     linkify: true,
@@ -69,6 +131,44 @@ export function createMarkdownRenderer(_isDark: boolean = true) {
     label: true,
     labelAfter: true,
   });
+
+  // Resolve local image paths for standard Markdown images: ![alt](src)
+  const defaultImage =
+    md.renderer.rules.image ||
+    ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options));
+
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const srcIdx = token.attrIndex("src");
+    if (srcIdx >= 0 && token.attrs) {
+      token.attrs[srcIdx][1] = resolveImageSrc(token.attrs[srcIdx][1], baseFilePath);
+    }
+    return defaultImage(tokens, idx, options, env, self);
+  };
+
+  // Resolve local image paths inside raw HTML blocks/inlines: <img src="..." />
+  const rewriteHtmlImages = (html: string) =>
+    html.replace(
+      /(<img\b[^>]*?\bsrc\s*=\s*)(["'])([^"']+)\2/gi,
+      (_match, prefix, quote, src) =>
+        `${prefix}${quote}${resolveImageSrc(src, baseFilePath)}${quote}`
+    );
+
+  const defaultHtmlBlock = md.renderer.rules.html_block;
+  md.renderer.rules.html_block = (tokens, idx, options, env, self) => {
+    const raw = defaultHtmlBlock
+      ? defaultHtmlBlock(tokens, idx, options, env, self)
+      : tokens[idx].content;
+    return rewriteHtmlImages(raw);
+  };
+
+  const defaultHtmlInline = md.renderer.rules.html_inline;
+  md.renderer.rules.html_inline = (tokens, idx, options, env, self) => {
+    const raw = defaultHtmlInline
+      ? defaultHtmlInline(tokens, idx, options, env, self)
+      : tokens[idx].content;
+    return rewriteHtmlImages(raw);
+  };
 
   const defaultFence = md.renderer.rules.fence;
 
